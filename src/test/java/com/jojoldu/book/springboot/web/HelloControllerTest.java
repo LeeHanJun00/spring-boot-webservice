@@ -1,4 +1,4 @@
-package com.jojoldu.book.springboot;
+package com.jojoldu.book.springboot.web;
 
 import com.jojoldu.book.springboot.web.HelloController;
 import org.junit.Test;
@@ -11,6 +11,8 @@ import org.springframework.test.web.servlet.MockMvc;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.hamcrest.Matchers.is;
 
 @RunWith(SpringRunner.class) // 테스트를 진행할때 SpringRunner 라는 실행자를 사용
 @WebMvcTest(controllers = HelloController.class) // 컨트롤러 어노테이션 사용 가능
@@ -27,5 +29,22 @@ public class HelloControllerTest {
     mvc.perform(get("/hello")) // MockMvc를 통해 입력 주소로 get 요펑을한다.
             .andExpect(status().isOk()) // 결과를 검증한다 HTTP Header의 Status를 검증한다. (Ok == 200인지 확인)
             .andExpect(content().string(hello)); // 응답 본문의 내용을 검증한다.
+  }
+
+  @Test
+  public void helloDto가_리턴된다() throws Exception {
+    //given
+    String name = "hello";
+    int amount = 1000;
+
+    mvc.perform(
+            get("/hello/dto")
+                    .param("name", name)
+                    .param("amount", String.valueOf(amount)))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.name", is(name)))
+            .andExpect(jsonPath("$.amount", is(amount)));
+
+
   }
 }
